@@ -1,0 +1,7 @@
+# dirs
+*env/
+bin/
+obj/
+
+# files
+*.job
