@@ -1,5 +1,9 @@
 #include "visitor.hpp"
 
+enum arguments{
+	peek_inside_of_file, // --peek -P
+	run // --run -R
+};
 
 void peek_in_file(const string& source_file_path)
 {
@@ -19,25 +23,26 @@ void peek_in_file(const string& source_file_path)
 void eat_file(const string& source_file_path)
 {
 	tml_lexer lexer(source_file_path);
-	while (lexer.get_next_token() -> type != tml_token_type::eof)
+	while (auto token = lexer.get_next_token())
 	{
-		auto token = lexer.get_next_token();
 		token_view(token);
+		if ( token -> type != tml_token_type::eof) break;
 	}
 	return;
 }
 
 void check_terminal_arguments(int argc,char** argv)
 {
+	
 	if (argc < 2) cout << "you have not given me any file to use!\n";
-	for (auto i{1}; i < argc; i++) // (auto str: span(argv,argc)) // i used this so that i can prevent my binaty from parsing itself by index being 1
+	for (auto i{1}; i < argc; i++) // (auto str: span(argv,argc)) // i used this so that i can prevent my binary from parsing itself by index being 1
 	{
 		string source_file_path(argv[i]);
 		if (!fs::exists(fs::path(source_file_path))) 
 		{
 			cerr << "file:`" << source_file_path << "` does not exists!\nrecheck your file path.\n";
 		}
-		peek_in_file(source_file_path);
+		//peek_in_file(source_file_path);
 		eat_file(source_file_path);        
 	}
 }

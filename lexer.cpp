@@ -50,39 +50,47 @@ char tml_lexer::peek_ahead(unsigned int offset, bool _skip_whitespace ) const
 	return this -> buffer[pos];
 }
 
-string tml_lexer::get_eof()
+string tml_lexer::get_delimiter()
 {
-	return string(1,'\0');
+	this -> _advance(1);
+	if (isspace(this -> get_current_char()))
+		this -> skip_whitespace();
+	if (this -> is_current_char_this('`'))
+		return "``";
 }
 
-string tml_lexer::get_delimiter()
-{}
-
-string tml_lexer::get_backtick()
-{}
-
-string tml_lexer::get_equals_sign()
-{}
+string tml_lexer::get_current_char_as_string()
+{
+	return string(1,this -> get_current_char());
+}
 
 string tml_lexer::get_identifier()
-{}
+{
+	string value;
+	while (isalnum(this -> get_current_char() || this -> get_current_char() == '_'))
+	{
+		value.push_back(this -> get_current_char());
+		this -> _advance();
+	}
+	return value;
+}
 
-string tml_lexer::get_t_string()
-{}
+string tml_lexer::get_string()
+{
+	char c = this -> get_current_char();
+	string value;
+	this -> _advance(1);
+	while (c != this -> get_current_char())
+	{
+		value.push_back(this -> get_current_char());
+		this -> _advance();
+	}
+	
+	this -> _advance(1);
+	return value;
+}
 
-string tml_lexer::get_c_string()
-{}
-
-string tml_lexer::get_opening_curly_brace()
-{}
-
-string tml_lexer::get_closing_curly_brace()
-{}
-
-string tml_lexer::get_semi_colon()
-{}
-
-void tml_lexer::_advance(int count = 1)
+void tml_lexer::_advance(int count )
 {
 	for (int i(0); i < count; i++)
 	{
@@ -148,9 +156,9 @@ bool tml_lexer::is_current_char_this(char c)
 	return false;
 }
 
-bool tml_lexer::is_char_in_the_next_x_steps_this(unsigned int x_offset,char c)
+bool tml_lexer::is_char_in_the_next_x_steps_this(unsigned int x_offset,char c, bool _skip_whitespace)
 {
-	if (this -> peek_ahead(x_offset) == c) return true;
+	if (this -> peek_ahead(x_offset,_skip_whitespace) == c) return true;
 	return false;
 }
 
@@ -174,8 +182,12 @@ bool tml_lexer::is_end_of_file()
 
 unique_ptr<tml_token_struct> tml_lexer::get_next_token()
 {
-	cout << buffer << '\n';
-	return this -> _advance_with_token(tml_token_type::eof,this -> get_eof());
+	cout << this -> buffer;
+	if (this -> is_end_of_file())
+	{
+		return this -> _advance_with_token(tml_token_type::eof,this -> get_current_char_as_string());
+	}
+	this -> _advance();
 }
 
 unique_ptr<tml_token_struct> tml_lexer::_advance_with_token(tml_token_type type, string value)
