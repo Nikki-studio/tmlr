@@ -2,6 +2,9 @@
 *env/
 bin/
 obj/
-
+lab/
 # files
 *.job
+*debug*.*txt*
+a.out
+*.*lab*
