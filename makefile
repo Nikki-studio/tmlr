@@ -1,10 +1,11 @@
 binary   ?= tmlr
-sources  := $(shell find . -name  "*.cpp")
-objects  := $(patsubst ./%cpp , obj/%.o , $(sources))
+SRC_DIRS := ./ src lib utils
+sources  := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
+objects  := $(patsubst %cpp , obj/%.o , $(sources))
 flags    := -std=c++23 -g -I./ -O3 -MMD -MP  -Wno-return-type # -Werror
 
 all: $(binary)
-bin/$(binary): $(binary)
+bin/$(binary): $(binary) | bin
 
 $(binary):$(objects) | bin
 	g++ $(flags) $^ -o bin/$@

@@ -22,9 +22,8 @@ namespace fs = filesystem;
  */
 enum class tml_token_type
 {
-	eof, 
+	eof, /* end of file */
 	delimiter, /* `` */
-	tagname, 
 	backtick, /* ` */
 	equals_sign, /* = */
 	identifier, /* variable_name */

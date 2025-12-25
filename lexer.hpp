@@ -21,7 +21,6 @@ class tml_lexer {
 	unsigned int current_line;
 	unsigned int current_col;
 	unsigned int buffer_position;
-	unsigned int total_lines;
 
 	vector<string> error_log;
 	vector<string> warning_log;
@@ -33,7 +32,13 @@ public:
 	string get_delimiter();
 	string get_current_char_as_string();
 	string get_identifier();
-	string get_string();
+	unique_ptr<tml_token_struct> HANDLE_INITIAL();
+	unique_ptr<tml_token_struct> HANDLE_IN_TAG_HEAD();
+	unique_ptr<tml_token_struct> HANDLE_IN_TAG_PROPERTY_COLLECTION();
+	unique_ptr<tml_token_struct> HANDLE_IN_TAG_PROPERTY_KEY_COLLECTION();
+	unique_ptr<tml_token_struct> HANDLE_IN_TAG_TAIL();
+	unique_ptr<tml_token_struct> HANDLE_IN_S_COMMENTS();
+	unique_ptr<tml_token_struct> HANDLE_IN_M_COMMENTS();
 	unique_ptr<tml_token_struct> get_next_token();
 	unique_ptr<tml_token_struct> _advance_with_token(tml_token_type type, string value);
 	void _advance(int count = 1);
@@ -51,7 +56,7 @@ public:
 	~tml_lexer();
 };
 
-
+// I have chosen to exclude the method get string because I am gon use quote chars as markers for my visitors 😘🫣😘🫣😘
 
 
 #endif // LEXER_HPP_INCLUDED
