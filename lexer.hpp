@@ -59,6 +59,7 @@ public:
 	unique_ptr<tml_token_struct> HANDLE_IN_M_COMMENTS();
 	unique_ptr<tml_token_struct> get_next_token();
 	unique_ptr<tml_token_struct> _advance_with_token(tml_token_type type, string value);
+	unique_ptr<tml_token_struct> check_and_return_if_is_end_of_file();
 	void _advance(int count = 1);
 	void skip_whitespace();
 	void skip_singleline_comments();

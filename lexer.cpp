@@ -184,7 +184,8 @@ bool tml_lexer::is_end_of_file()
 
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 {
-	cout << this -> buffer;
+	this -> check_and_return_if_is_end_of_file();
+	return this -> _advance_with_token(tml_token_type::content," | " + this -> get_current_char_as_string()+ " | ");
 }
 
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
@@ -228,14 +229,16 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_M_COMMENTS()
 
 unique_ptr<tml_token_struct> tml_lexer::get_next_token()
 {
-	if (this -> is_end_of_file())
+	if (!this -> get_errors().empty())
 	{
-		return this -> _advance_with_token(tml_token_type::eof,this -> get_current_char_as_string());
+		string err_buffer = "\n😡😡\n---\n";
+		for (string& str:this -> get_errors())
+		{
+			err_buffer.append(str + "\n---\n");
+		}
+		cerr << err_buffer;
 	}
-	else if (this -> is_current_char_this('`') && this -> is_char_in_the_next_x_steps_this(1,'`'))
-	{
-		this -> current_state = tml_lexer_state::IN_TAG_HEAD;
-	}
+	this -> check_and_return_if_is_end_of_file();
 	switch (this -> current_state)
 	{
 		case tml_lexer_state::IN_TAG_HEAD:
@@ -274,13 +277,22 @@ unique_ptr<tml_token_struct> tml_lexer::get_next_token()
 		}
 			break;
 	}
-	return nullptr;
+	if (!this -> is_end_of_file()) this -> _advance(); 
+	this -> report_error("unknown token:\n\t" + this -> get_current_char_as_string() + "\n\t^\n\t|\n\tthis token is placed in the wrong place. or is not part of the syntax");
 }
 
 unique_ptr<tml_token_struct> tml_lexer::_advance_with_token(tml_token_type type, string value)
 {
 	if (value.length()==1) this -> _advance();
 	return init_token(type,value, this -> current_line, this -> current_col, value.length(),this -> current_filename);
+}
+
+unique_ptr<tml_token_struct> tml_lexer::check_and_return_if_is_end_of_file()
+{
+	if (this -> is_end_of_file())
+	{
+		return init_token(tml_token_type::eof,"",this -> current_line,this -> current_col,1,this -> current_filename);
+	}
 }
 
 void tml_lexer::change_state(tml_lexer_state state)
