@@ -52,6 +52,8 @@ enum class tml_token_type
 	closing_curly_brace, /* } */
 	semi_colon, /* ; */
 	whitespace, /* \t\n */
+	error,
+	warning,
 };
 
 typedef struct tml_token_struct

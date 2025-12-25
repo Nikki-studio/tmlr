@@ -27,7 +27,7 @@ enum class tml_lexer_state
 	IN_TAG_PROPERTY_COLLECTION,
 	IN_TAG_PROPERTY_KEY_COLLECTION,
 	IN_TAG_TAIL,
-	IN_S_COMMENTS,
+	IN_S_COMMENTS, 
 	IN_M_COMMENTS,
 };
 
@@ -66,6 +66,8 @@ public:
 	void skip_muliline_comments();
 	void report_error(const string& message);
 	void report_warning(const string& message);
+	void clear_error();
+	void clear_warning();
 	void change_state(tml_lexer_state state);
 	vector<string> get_errors();
 	vector<string> get_warnings();

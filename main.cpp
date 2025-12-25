@@ -41,10 +41,38 @@ void peek_in_file(const string& source_file_path)
 void eat_file(const string& source_file_path)
 {
 	tml_lexer lexer(source_file_path);
-	while (auto token = lexer.get_next_token())
+	unique_ptr<tml_token_struct> token = lexer.get_next_token();
+	while (token && token -> type != tml_token_type::eof)
 	{
+		if (!lexer.get_errors().empty())
+		{
+			string err_buffer = "\n🤢🤢\n---\n";
+			for (string str:lexer.get_errors())
+			{
+				if (str.empty()) continue;
+				err_buffer.append(str + "\n---\n");
+			}
+			lexer.clear_error();
+			cerr << err_buffer << "\n";
+			exit(1);
+			break;
+		}
+		if (!lexer.get_warnings().empty())
+		{
+			string warning_buffer = "\n😡😡\n---\n";
+			for (string str:lexer.get_warnings())
+			{
+				if (str.empty()) continue;
+				warning_buffer.append(str + "\n---\n");
+			}
+			lexer.clear_warning();
+			cerr << warning_buffer << "\n";
+			exit(1);
+			break;
+		}
 		token_view(token);
-		if ( token -> type != tml_token_type::eof) break;
+		if (!token) break;
+		token = lexer.get_next_token();
 	}
 	return;
 }

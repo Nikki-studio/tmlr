@@ -21,7 +21,12 @@
 unique_ptr<tml_token_struct> init_token(tml_token_type type,string value,unsigned int line,unsigned int col,unsigned int len, string file_path)
 {
 	auto token = make_unique<tml_token_struct>();
-	if (!token) return nullptr;
+	if (!token) 
+	{
+		cerr << "Failed to create new token!\n";
+		exit(1);
+		return nullptr;
+	}
 	token -> type = type;
 	token -> value = value;
 	token -> line = line;

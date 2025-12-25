@@ -1,7 +1,7 @@
 ``document style="color=blue;attribute= {bold,underline};"`       
 Oh, this is ``    
     text color 
-    `love`.` // This is a comment
+    `love`. // This is a comment
 
 /* This is a multiline comment */
 /* This is /* a /* nested /* multiline/*comment */*/*/*/*/
@@ -13,3 +13,4 @@ Oh, this is ``
 
 
 
+`
