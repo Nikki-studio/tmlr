@@ -13,3 +13,10 @@ For full details, see the `LICENSE` file included with this distribution.
 
 > This is a universal text mark up language made as an attempt to make easy working with terminal output
 
+## how tmlr works
+
+> tmlr works is inspired by html. it uses backticks as delimiters.
+
+```tmlr
+``tagname attributes`tag contents ... `
+```
