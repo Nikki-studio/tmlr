@@ -24,11 +24,7 @@ enum class tml_lexer_state
 {
 	INITIAL,
 	IN_TAG_HEAD,
-	IN_TAG_PROPERTY_COLLECTION,
-	IN_TAG_PROPERTY_KEY_COLLECTION,
 	IN_TAG_TAIL,
-	IN_S_COMMENTS, 
-	IN_M_COMMENTS,
 };
 
 class tml_lexer {
@@ -47,19 +43,15 @@ public:
 	void load_file();
 	char get_current_char() const;
 	char peek_ahead(unsigned int offset = 1, bool _skip_whitespace = true) const;
-	string get_delimiter();
 	string get_current_char_as_string();
 	string get_identifier();
+	string get_content(char border = '`');
 	unique_ptr<tml_token_struct> HANDLE_INITIAL();
 	unique_ptr<tml_token_struct> HANDLE_IN_TAG_HEAD();
-	unique_ptr<tml_token_struct> HANDLE_IN_TAG_PROPERTY_COLLECTION();
-	unique_ptr<tml_token_struct> HANDLE_IN_TAG_PROPERTY_KEY_COLLECTION();
 	unique_ptr<tml_token_struct> HANDLE_IN_TAG_TAIL();
-	unique_ptr<tml_token_struct> HANDLE_IN_S_COMMENTS();
-	unique_ptr<tml_token_struct> HANDLE_IN_M_COMMENTS();
 	unique_ptr<tml_token_struct> get_next_token();
 	unique_ptr<tml_token_struct> _advance_with_token(tml_token_type type, string value);
-	unique_ptr<tml_token_struct> check_and_return_if_is_end_of_file();
+	unique_ptr<tml_token_struct> return_end_of_file();
 	void _advance(int count = 1);
 	void skip_whitespace();
 	void skip_singleline_comments();

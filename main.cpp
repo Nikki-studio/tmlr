@@ -74,6 +74,7 @@ void eat_file(const string& source_file_path)
 		if (!token) break;
 		token = lexer.get_next_token();
 	}
+	token_view(token);
 	return;
 }
 

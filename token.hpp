@@ -45,15 +45,15 @@ enum class tml_token_type
 	backtick, /* ` */
 	equals_sign, /* = */
 	identifier, /* variable_name */
+	content, /* ... */
 	t_string, /* "..." */
 	c_string, /* '...' */
-	content, /* ... */
 	opening_curly_brace, /* { */
 	closing_curly_brace, /* } */
 	semi_colon, /* ; */
-	whitespace, /* \t\n */
-	error,
-	warning,
+	comma, /* , */
+	error, /* ! */
+	warning, /* ? */
 };
 
 typedef struct tml_token_struct
