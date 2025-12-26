@@ -122,9 +122,9 @@ void tml_lexer::_advance(int count )
 		}
 		else this -> current_col++;
 		this ->buffer_position++;
-    this -> skip_singleline_comments();
-    this -> skip_multiline_comments();
-	}
+		this -> skip_multiline_comments();
+		this -> skip_singleline_comments();
+  }
 }
 
 void tml_lexer::skip_whitespace()
@@ -138,15 +138,15 @@ void tml_lexer::skip_singleline_comments()
 	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'/',false))) return;
 	else this -> _advance(2);
 	while (!this -> is_end_of_file()&& !this -> is_current_char_this('\n'))
-	{
 		this -> _advance();
-	}
-	if (this -> is_current_char_this('\n')) this -> _advance();
+	if (this -> is_current_char_this('\n')) 
+		this -> _advance();
+
 }
 
 void tml_lexer::skip_multiline_comments()
 {
-	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'/',false))) return;
+	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'*',false))) return;
 	else this -> _advance(2);
 	int depth = 1;
 	while (depth > 0 && this -> buffer_position < buffer.size())
