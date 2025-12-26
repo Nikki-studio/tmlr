@@ -122,6 +122,8 @@ void tml_lexer::_advance(int count )
 		}
 		else this -> current_col++;
 		this ->buffer_position++;
+    this -> skip_singleline_comments();
+    this -> skip_multiline_comments();
 	}
 }
 
@@ -142,7 +144,7 @@ void tml_lexer::skip_singleline_comments()
 	if (this -> is_current_char_this('\n')) this -> _advance();
 }
 
-void tml_lexer::skip_muliline_comments()
+void tml_lexer::skip_multiline_comments()
 {
 	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'/',false))) return;
 	else this -> _advance(2);
@@ -215,6 +217,11 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 		}
 		else /* return _advance_with_token(tml_token_type::backtick,this -> get_current_char_as_string()); */
 		{
+      if (!this -> current_states.empty())
+      {
+        this -> current_states.pop_back();
+        return this -> _advance_with_token(tml_token_type::backtick,this -> get_current_char_as_string());
+      }
 			value += " > " + this -> get_current_char_as_string()+ " < ";
 			token = init_token(tml_token_type::content,
 					value,this -> current_line,this -> current_col,1,
@@ -278,8 +285,22 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
 
 	if (this -> is_current_char_this('`'))
 	{
-		this -> current_state = tml_lexer_state::INITIAL;
-		return this -> _advance_with_token(tml_token_type::backtick, this -> get_current_char_as_string());
+    if (this -> is_char_in_the_next_x_steps_this(1,'`'))
+    {
+      this -> current_states.push_back(this -> current_state);
+      this -> current_state = tml_lexer_state::IN_TAG_HEAD;
+      value += this -> get_current_char_as_string();
+      this -> _advance();
+      value += this -> get_current_char_as_string();
+      token = init_token(tml_token_type::delimiter,value,this -> current_line,this -> current_col, value.length(),this -> current_filename);
+      this -> _advance();
+      return token;
+    }
+    else
+    {
+		  this -> current_state = tml_lexer_state::INITIAL;
+		  return this -> _advance_with_token(tml_token_type::backtick, this -> get_current_char_as_string());
+    }
 	}
 
 	unsigned int line(this -> current_line),col(this -> current_col);
@@ -290,11 +311,8 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
 
 unique_ptr<tml_token_struct> tml_lexer::get_next_token()
 {
-	cout << (int)this -> current_state << "\n";
 	if (this -> is_end_of_file()) return this -> return_end_of_file();
-	this -> skip_singleline_comments();
-	this -> skip_muliline_comments();
-	
+
 	switch (this -> current_state)
 	{
 		case tml_lexer_state::IN_TAG_HEAD:

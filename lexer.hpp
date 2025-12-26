@@ -55,7 +55,7 @@ public:
 	void _advance(int count = 1);
 	void skip_whitespace();
 	void skip_singleline_comments();
-	void skip_muliline_comments();
+	void skip_multiline_comments();
 	void report_error(const string& message);
 	void report_warning(const string& message);
 	void clear_error();
