@@ -1,7 +1,17 @@
-# TMLR
+# TMLR - Text Markup Language for Terminals
 
-```ascii
- *  Copyright (C) 2024  Joseph Wangai Mwaniki joewamwaniki@gmail.com
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+> A universal text markup language designed for easy terminal output formatting, inspired by HTML.
+
+## 📋 Overview
+
+TMLR (Text Markup Language for Terminals) is a lightweight markup language that uses backtick-based syntax for formatting terminal output. Built on C++ and NCurses, it provides a simple way to create styled terminal applications.
+
+## 📝 License
+
+```
+ *  Copyright (C) 2024  Joseph Wangai Mwaniki <joewamwaniki@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -11,17 +21,16 @@ the Free Software Foundation, either version 3 of the License, or
 For full details, see the `LICENSE` file included with this distribution.
 ```
 
-> This is a universal text mark up language made as an attempt to make easy working with terminal output
+## 🚀 How TMLR Works
 
-## how tmlr works
-
-> tmlr works is inspired by html. it uses backticks as delimiters.
+TMLR is inspired by HTML and uses backticks as delimiters:
 
 ```tmlr
 ``tagname attributes`tag contents ... `
 ```
 
-***sweet example***
+### Example
+
 ```tmlr
 ``document style="color=blue;attribute= {bold,underline};"`       
 Oh, this is ``    
@@ -41,15 +50,37 @@ Oh, this is ``
 `
 ```
 
-### rules
+## 📜 Rules & Syntax
 
-* The root tag is the document tag.
-* Nothing should exist outside the bounds of the document tag.
-* The begining of the tag is signaled by `` two backticks. And there can ony exist whitespace between the two head delimiter. eg.
+* **Root Tag**: The document tag is the root tag
+* **Bounds**: Nothing should exist outside the bounds of the document tag
+* **Delimiters**: Tags begin with two backticks (` `` `). Only whitespace is allowed between them:
 
-    ```tmlr
-    `   `tagname attributes`tag contents ... `
-    ```
+```tmlr
+`   `tagname attributes`tag contents ... `
+```
 
-    > this is to reduce the chances of err. maybe in a future day that this shall be lifted.
+> Note: This strict whitespace rule helps prevent errors and may be relaxed in future versions.
 
+## 🏗️ Architecture
+
+- **Built with**: C++ and NCurses
+- **Target**: Terminal/console applications
+- **Output**: Generates styled terminal output
+
+## 🔍 Keywords
+
+terminal, markup-language, text-formatting, ncurses, cpp, console, text-ui, tui, formatting, syntax
+
+## 📄 File Structure
+
+```
+├── README.md          # This documentation
+├── LICENSE            # GNU GPL v3 License
+├── src/               # Source code
+└── examples/          # Example TMLR files
+```
+
+---
+
+*Built with C++ and NCurses. For questions or contributions, contact Joseph Wangai Mwaniki at joewamwaniki@gmail.com*
