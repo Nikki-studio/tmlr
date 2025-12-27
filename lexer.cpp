@@ -64,14 +64,14 @@ void tml_lexer::load_file()
 
 char tml_lexer::get_current_char () const 
 {
-	if (this -> buffer_position >= this -> buffer.size()) return '\0';
+	if (this -> buffer.size() < this -> buffer_position) return '\0';
 	return this -> buffer[this -> buffer_position];
 }
 
 char tml_lexer::peek_ahead(unsigned int offset, bool _skip_whitespace ) const 
 {
 	size_t pos = this -> buffer_position + offset;
-	if (pos >= this -> buffer.size()) return '\0';
+	if (this -> buffer.size() < pos) return '\0';
 	if (_skip_whitespace)
 		while (isspace(this -> buffer[pos]))
 			pos++;
@@ -100,9 +100,9 @@ string tml_lexer::get_identifier()
 
 string tml_lexer::get_content(char border)
 {
-	if (this -> is_end_of_file() ) return "";
-	string value = "";
-	while (!this -> is_end_of_file() && !(this -> is_current_char_this(border)||this -> is_current_char_this('\0')))
+  string value = "";
+	if (this -> is_end_of_file() ) return value;
+	while (!this -> is_end_of_file() && !this -> is_current_char_this(border) && !this -> is_current_char_this('\0'))
 	{
 		value += this -> get_current_char_as_string();
 		this -> _advance(1);
@@ -286,12 +286,17 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
       this -> current_state = tml_lexer_state::IN_TAG_HEAD;
       return token;
     }
-    this -> current_state = (this -> current_states.empty)? tml_lexer_state::INITIAL: this -> current_states.pop_back();
+    if (this -> current_states.empty()) this -> current_state = tml_lexer_state::INITIAL;
+    else if (!this -> current_states.empty())
+    {
+      this -> current_state = this -> current_states.back();
+      this -> current_states.pop_back();
+    }
     return init_token(tml_token_type::backtick,value,line,col,value.length(),this -> current_filename);// token
 	}
 
 	unsigned int line(this -> current_line),col(this -> current_col);
-	value += get_content('`');
+	value += this -> get_content('`');
 	token = init_token(tml_token_type::content,value,line,col,value.length(),this -> current_filename);
 	return token;
 }
