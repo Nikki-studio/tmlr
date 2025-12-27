@@ -100,10 +100,14 @@ string tml_lexer::get_identifier()
 
 string tml_lexer::get_content(char border)
 {
-  string value = "";
+	string value = "";
 	if (this -> is_end_of_file() ) return value;
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) this -> skip_singleline_comments();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) this -> skip_multiline_comments();
 	while (!this -> is_end_of_file() && !this -> is_current_char_this(border) && !this -> is_current_char_this('\0'))
 	{
+		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) this -> skip_singleline_comments();
+		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) this -> skip_multiline_comments();
 		value += this -> get_current_char_as_string();
 		this -> _advance(1);
 	}
@@ -122,9 +126,7 @@ void tml_lexer::_advance(int count )
 		}
 		else this -> current_col++;
 		this ->buffer_position++;
-		this -> skip_multiline_comments();
-		this -> skip_singleline_comments();
-  }
+	}
 }
 
 void tml_lexer::skip_whitespace()
@@ -133,21 +135,29 @@ void tml_lexer::skip_whitespace()
 		this -> _advance();
 }
 
-void tml_lexer::skip_singleline_comments()
+unique_ptr<tml_token_struct> tml_lexer::skip_singleline_comments()
 {
-	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'/',false))) return;
-	else this -> _advance(2);
+	unsigned int line(this -> current_line),col(this -> current_col),len(0);
+	this -> _advance(2);
+	len += 2;
 	while (!this -> is_end_of_file()&& !this -> is_current_char_this('\n'))
+	{
 		this -> _advance();
-	if (this -> is_current_char_this('\n')) 
+		len++;
+	}
+	if (this -> is_current_char_this('\n'))
+	{
 		this -> _advance();
-
+		len++;
+	}
+	return init_token(tml_token_type::s_comment,"",line,col,len,this -> current_filename);
 }
 
-void tml_lexer::skip_multiline_comments()
+unique_ptr<tml_token_struct> tml_lexer::skip_multiline_comments()
 {
-	if (!(this -> is_current_char_this('/')&&this -> is_char_in_the_next_x_steps_this(1,'*',false))) return;
-	else this -> _advance(2);
+	unsigned int line(this -> current_line),col(this -> current_col),len(0);
+	this -> _advance(2);
+	len += 2;
 	int depth = 1;
 	while (depth > 0 && this -> buffer_position < buffer.size())
 	{
@@ -156,15 +166,19 @@ void tml_lexer::skip_multiline_comments()
 		{
 			depth++;
 			this -> _advance(2);
+			len += 2;
 		}
 		if (this -> is_current_char_this('*') && 
 				this -> is_char_in_the_next_x_steps_this(1,'/',false))
 		{
 			depth--;
 			this -> _advance(2);
+			len += 2;
 		}
 		this -> _advance(1);
+		len ++;
 	}
+	return init_token(tml_token_type::m_comment,"",line,col,len,this -> current_filename);
 }
 
 bool tml_lexer::is_current_char_this(char c)
@@ -199,6 +213,8 @@ bool tml_lexer::is_end_of_file()
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 {
 	if (this -> is_end_of_file()) return this -> return_end_of_file();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) this -> skip_singleline_comments();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) this -> skip_multiline_comments();
 	string value = "";
 	unique_ptr<tml_token_struct> token = nullptr;
 	if (this -> is_current_char_this('`'))
@@ -234,6 +250,8 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 {
 	if (this -> is_end_of_file()) return this -> return_end_of_file();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) this -> skip_singleline_comments();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) this -> skip_multiline_comments();
 	this -> skip_whitespace();
 
 	string value ="";
@@ -268,6 +286,8 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
 {
 	if (this -> is_end_of_file()) return this -> return_end_of_file();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) this -> skip_singleline_comments();
+	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) this -> skip_multiline_comments();
 	string value = "";
 	unique_ptr<tml_token_struct> token = nullptr;
 

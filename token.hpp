@@ -45,6 +45,8 @@ enum class tml_token_type
 	backtick, /* ` */
 	equals_sign, /* = */
 	identifier, /* variable_name */
+	m_comment, //
+	s_comment, /* */
 	content, /* ... */
 	t_string, /* "..." */
 	c_string, /* '...' */

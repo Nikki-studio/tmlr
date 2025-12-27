@@ -52,10 +52,10 @@ public:
 	unique_ptr<tml_token_struct> get_next_token();
 	unique_ptr<tml_token_struct> _advance_with_token(tml_token_type type, string value);
 	unique_ptr<tml_token_struct> return_end_of_file();
+	unique_ptr<tml_token_struct> skip_singleline_comments();
+	unique_ptr<tml_token_struct> skip_multiline_comments();
 	void _advance(int count = 1);
 	void skip_whitespace();
-	void skip_singleline_comments();
-	void skip_multiline_comments();
 	void report_error(const string& message);
 	void report_warning(const string& message);
 	void clear_error();
