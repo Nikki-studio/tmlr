@@ -173,14 +173,16 @@ unique_ptr<tml_token_struct> tml_lexer::skip_multiline_comments()
 			depth++;
 			this -> _advance(2);
 			len += 2;
+      continue;
 		}
 		if (this -> is_current_char_this('*') && 
 				this -> is_char_in_the_next_x_steps_this(1,'/',false))
 		{
-			depth--;
 			this -> _advance(2);
 			len += 2;
-		}
+      depth--;
+      continue;
+    }
 		this -> _advance(1);
 		len ++;
 	}
