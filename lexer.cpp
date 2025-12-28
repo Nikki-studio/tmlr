@@ -64,16 +64,16 @@ void tml_lexer::load_file()
 
 char tml_lexer::get_current_char () const 
 {
-	if (this -> buffer.size() < this -> buffer_position) return '\0';
+	if (this -> buffer_position >= this -> buffer.size() ) return '\0';
 	return this -> buffer[this -> buffer_position];
 }
 
 char tml_lexer::peek_ahead(unsigned int offset, bool _skip_whitespace ) const 
 {
 	size_t pos = this -> buffer_position + offset;
-	if (this -> buffer.size() < pos) return '\0';
+	if (pos >= this -> buffer.size()) return '\0';
 	if (_skip_whitespace)
-		while (isspace(this -> buffer[pos]))
+		while (pos < this -> buffer.size() && isspace(this -> buffer[pos]))
 			pos++;
 	if (pos >= this -> buffer.size()) return '\0';
 	return this -> buffer[pos];
@@ -215,7 +215,7 @@ void tml_lexer::report_warning(const string& message)
 
 bool tml_lexer::is_end_of_file()
 {
-	return  (this -> buffer.size() < this -> buffer_position);
+	return  (this -> buffer_position >= this -> buffer.size());
 }
 
 unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
@@ -227,7 +227,6 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 	unique_ptr<tml_token_struct> token = nullptr;
 	if (this -> is_current_char_this('`'))
 	{
-		cout << "here\n";
 		if (this -> is_char_in_the_next_x_steps_this(1,'`'))
 		{
 			value += this -> get_current_char_as_string();
@@ -236,7 +235,7 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 			value += this -> get_current_char_as_string();
 			token = init_token(tml_token_type::delimiter,value,this -> current_line,this -> current_col,value.length(),this -> current_filename);
 			this -> _advance(1);
-			this -> current_state = tml_lexer_state::IN_TAG_HEAD;
+			this -> change_state( tml_lexer_state::IN_TAG_HEAD);
 			return token;
 		}
 		value += " > " + this -> get_current_char_as_string()+ " < ";
@@ -273,7 +272,7 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 	}
 	else if (this -> is_current_char_this('`'))
 	{
-		this -> current_state = tml_lexer_state::IN_TAG_TAIL;
+		this -> change_state (tml_lexer_state::IN_TAG_TAIL);
 		return this -> _advance_with_token(tml_token_type::backtick,this -> get_current_char_as_string());
 	}
 	else if (this -> is_current_char_this('"')) return this -> _advance_with_token(tml_token_type::t_string           ,this -> get_current_char_as_string());
@@ -284,6 +283,7 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 	else if (this -> is_current_char_this('{')) return this -> _advance_with_token(tml_token_type::opening_curly_brace,this -> get_current_char_as_string());
 	else if (this -> is_current_char_this('}')) return this -> _advance_with_token(tml_token_type::closing_curly_brace,this -> get_current_char_as_string());
 	value += " > " + this -> get_current_char_as_string()+ " < ";
+	if (value.empty() && this -> is_end_of_file()) return this -> return_end_of_file();
 	token = init_token(tml_token_type::content,
 			value,this -> current_line,this -> current_col,1,
 			this -> current_filename);
@@ -311,20 +311,21 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
       token = init_token(tml_token_type::delimiter,value,line,col,value.length(),this -> current_filename);
       this -> _advance();
       this -> current_states.push_back(this -> current_state);
-      this -> current_state = tml_lexer_state::IN_TAG_HEAD;
+      this -> change_state (tml_lexer_state::IN_TAG_HEAD);
       return token;
     }
-    if (this -> current_states.empty()) this -> current_state = tml_lexer_state::INITIAL;
+    if (this -> current_states.empty()) this -> change_state(tml_lexer_state::INITIAL);
     else if (!this -> current_states.empty())
     {
-      this -> current_state = this -> current_states.back();
+      this -> change_state(this -> current_states.back());
       this -> current_states.pop_back();
     }
     return init_token(tml_token_type::backtick,value,line,col,value.length(),this -> current_filename);// token
 	}
-
+	if (this -> is_end_of_file()) return this -> return_end_of_file();
 	unsigned int line(this -> current_line),col(this -> current_col);
 	value += this -> get_content('`');
+	if (value.empty() && this -> is_end_of_file()) return this -> return_end_of_file();
 	token = init_token(tml_token_type::content,value,line,col,value.length(),this -> current_filename);
 	return token;
 }
