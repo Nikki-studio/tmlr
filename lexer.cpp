@@ -102,10 +102,18 @@ string tml_lexer::get_content(char border)
 {
 	string value = "";
 	if (this -> is_end_of_file() ) return value;
-	while (!this -> is_end_of_file() && !this -> is_current_char_this(border) && !this -> is_current_char_this('\0'))
+	while ( !this -> is_end_of_file() &&  // is not end of file
+			!this -> is_current_char_this(border) && // and is not the border 
+			!this -> is_current_char_this('\0') && // is not null 
+			!(
+				this -> is_current_char_this('/') &&
+				(
+					this -> is_char_in_the_next_x_steps_this(1,'/',false) || // is not single line comment
+					this -> is_char_in_the_next_x_steps_this(1,'*',false)    // or is not multiline comments
+				)
+			)
+		)
 	{
-		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) break;
-		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) break;
 		value += this -> get_current_char_as_string();
 		this -> _advance(1);
 	}
