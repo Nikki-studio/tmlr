@@ -97,48 +97,15 @@ string tml_lexer::get_identifier()
 	}
 	return value;
 }
-void tml_lexer::radical_skip_comments()
-{
-	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false))
-	{
-		this -> _advance(2);
-		while (!this -> is_end_of_file()&& !this -> is_current_char_this('\n'))
-			this -> _advance();
-		if (this -> is_current_char_this('\n'))
-			this -> _advance();
-
-	}
-	if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false))
-	{
-		this -> _advance(2);
-		int depth = 1;
-		while (depth > 0 && this -> buffer_position < buffer.size())
-		{
-			if (this -> is_current_char_this('/') && 
-					this -> is_char_in_the_next_x_steps_this(1,'*',false))
-			{
-				depth++;
-				this -> _advance(2);
-			}
-			if (this -> is_current_char_this('*') && 
-					this -> is_char_in_the_next_x_steps_this(1,'/',false))
-			{
-				depth--;
-				this -> _advance(2);
-			}
-			this -> _advance(1);
-		}
-	}
-}
 
 string tml_lexer::get_content(char border)
 {
 	string value = "";
 	if (this -> is_end_of_file() ) return value;
-	this -> radical_skip_comments();
 	while (!this -> is_end_of_file() && !this -> is_current_char_this(border) && !this -> is_current_char_this('\0'))
 	{
-		this -> radical_skip_comments();
+		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'/',false)) break;
+		if (this -> is_current_char_this('/') && this -> is_char_in_the_next_x_steps_this(1,'*',false)) break;
 		value += this -> get_current_char_as_string();
 		this -> _advance(1);
 	}
