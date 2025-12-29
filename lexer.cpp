@@ -203,13 +203,13 @@ bool tml_lexer::is_char_in_the_next_x_steps_this(unsigned int x_offset,char c, b
 
 void tml_lexer::report_error(const string& message)
 {
-	string err("!!err!: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + "}\n\t" + message);
+	string err("!!err!: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
 	this -> error_log.push_back(err);
 }
 
 void tml_lexer::report_warning(const string& message)
 {
-	string warning("??warning?: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + "}\n\t" + message);
+	string warning("??warning?: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
 	this -> warning_log.push_back(warning);
 }
 

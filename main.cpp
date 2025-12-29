@@ -17,6 +17,10 @@
 
 
 #include "visitor.hpp"
+#define AUTHOR  "\"Joseph Wangai Mwaniki\""
+#define PROGRAM "\"tmlr\""
+#define PROJECT "\"project JOB\""
+
 
 enum arguments{
 	peek_inside_of_file, // --peek -P
