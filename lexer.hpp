@@ -54,8 +54,9 @@ public:
 	unique_ptr<tml_token_struct> return_end_of_file();
 	unique_ptr<tml_token_struct> skip_singleline_comments();
 	unique_ptr<tml_token_struct> skip_multiline_comments();
+	unique_ptr<tml_token_struct> skip_whitespace();
+	bool is_current_char_whitespace_except_end_of_file();
 	void _advance(int count = 1);
-	void skip_whitespace();
 	void report_error(const string& message);
 	void report_warning(const string& message);
 	void clear_error();

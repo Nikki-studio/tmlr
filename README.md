@@ -81,6 +81,8 @@ terminal, markup-language, text-formatting, ncurses, cpp, console, text-ui, tui,
 └── examples/          # Example TMLR files
 ```
 
+## **LIMITATION**
+> * Only parse UTF-8 more than a byte char in the tail
 ---
 
 *Built with C++ and NCurses. For questions or contributions, contact Joseph Wangai Mwaniki at joewamwaniki@gmail.com*

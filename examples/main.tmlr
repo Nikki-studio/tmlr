@@ -16,7 +16,8 @@
 */
 
 
-``document style="color=blue;attribute= {bold,underline};"`       
+``
+document style="color=blue;attribute= {bold,underline};"`       
 Oh, this is ``    
     text color 
     `love`. // This is a comment

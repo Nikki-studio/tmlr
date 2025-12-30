@@ -47,7 +47,7 @@ enum class tml_token_type
 	identifier, /* variable_name */
 	m_comment, //
 	s_comment, /* */
-  whitespace, //  \n\t\r
+	whitespace, //  \n\t\r
 	content, /* ... */
 	t_string, /* "..." */
 	c_string, /* '...' */
