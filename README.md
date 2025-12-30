@@ -75,10 +75,29 @@ terminal, markup-language, text-formatting, ncurses, cpp, console, text-ui, tui,
 ## 📄 File Structure
 
 ```
-├── README.md          # This documentation
-├── LICENSE            # GNU GPL v3 License
-├── src/               # Source code
-└── examples/          # Example TMLR files
+.
+├── ast.cpp
+├── ast.hpp
+├── examples
+│   ├── documents_tag.tmlr
+│   ├── error.tmlr
+│   ├── head.tmlr
+│   ├── main.tmlr
+│   └── one byte file.tmlr
+├── lexer.cpp
+├── lexer.hpp
+├── LICENCE
+├── main.cpp
+├── makefile
+├── parser.cpp
+├── parser.hpp
+├── potential bugs.md
+├── README.md
+├── token.cpp
+├── token.hpp
+├── visitor.cpp
+└── visitor.hpp
+
 ```
 
 ## **LIMITATION**
