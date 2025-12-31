@@ -44,7 +44,7 @@ void tml_lexer::load_file()
 	ifstream file(this -> current_filename, ios::binary | ios::ate);
 	if (!file.is_open())
 	{
-		report_error("Cannot open file: " + this -> current_filename + "\nthings to recheck\n- your filepath\n- check file permission\n- if memory has run out");
+		this -> report_error("Cannot open file: " + this -> current_filename + "\nthings to recheck\n- your filepath\n- check file permission\n- if memory has run out");
 		return;
 	}
 
@@ -210,13 +210,13 @@ bool tml_lexer::is_char_in_the_next_x_steps_this(unsigned int x_offset,char c, b
 
 void tml_lexer::report_error(const string& message)
 {
-	string err("!!err!: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
+	string err("!!lexer err!: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
 	this -> error_log.push_back(err);
 }
 
 void tml_lexer::report_warning(const string& message)
 {
-	string warning("??warning?: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
+	string warning("??lexer warning?: {(lin, col),(" + to_string(this -> current_line) + ", " + to_string(this -> current_col ) + ")}\n\t" + message);
 	this -> warning_log.push_back(warning);
 }
 
@@ -249,6 +249,7 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_INITIAL()
 				value,this -> current_line,this -> current_col,1,
 				this -> current_filename);
 		this -> report_error("unknown token:\n\t>" + this -> get_current_char_as_string() + "<\n\t ^\n\t |\n\tthis token is placed in the wrong place. or is not part of the syntax\n\tthis must be accompanied by a tag\n\tGENERAL");
+		this -> report_warning("unknown token:\n\t>" + this -> get_current_char_as_string() + "<\n\t ^\n\t |\n\tthis token might not be allowed in the lexer\n\tthis must be accompanied by a tag\n\tGENERAL");
 		this -> _advance(1);
 		return token;
 	}
@@ -293,6 +294,7 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 			value,this -> current_line,this -> current_col,1,
 			this -> current_filename);
 	this -> report_error("unknown token:\n\t>" + this -> get_current_char_as_string() + "<\n\t ^\n\t |\n\tthis token is placed in the wrong place. or is not part of the syntax\n\tTAG HEAD");
+	this -> report_warning("unknown token:\n\t>" + this -> get_current_char_as_string() + "<\n\t ^\n\t |\n\tthis token might not be allowed in the lexer\n\tTAG HEAD");
 	this -> _advance(1);
 	return token;
 }
@@ -307,17 +309,17 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_TAIL()
 
 	if (this -> is_current_char_this('`'))
 	{
-    unsigned int line(this -> current_line), col(this -> current_col);
-    value += this -> get_current_char_as_string();
-	// removed this -> _advance();
-    if (this -> is_current_char_this('`'))
-    {
-      value += this -> get_current_char_as_string();
-      token = init_token(tml_token_type::delimiter,value,line,col,value.length(),this -> current_filename);
-      this -> _advance();
-      this -> current_states.push_back(this -> current_state);
-      this -> change_state (tml_lexer_state::IN_TAG_HEAD);
-      return token;
+    	unsigned int line(this -> current_line), col(this -> current_col);
+    	value += this -> get_current_char_as_string();
+		this -> _advance();
+    	if (this -> is_current_char_this('`'))
+    	{
+    	  value += this -> get_current_char_as_string();
+    	  token = init_token(tml_token_type::delimiter,value,line,col,value.length(),this -> current_filename);
+    	  this -> _advance();
+    	  this -> current_states.push_back(this -> current_state);
+    	  this -> change_state (tml_lexer_state::IN_TAG_HEAD);
+    	  return token;
     }
     if (this -> current_states.empty()) this -> change_state(tml_lexer_state::INITIAL);
     else if (!this -> current_states.empty())

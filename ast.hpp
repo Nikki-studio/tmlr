@@ -19,7 +19,63 @@
 #ifndef AST_HPP_INCLUDED
 #define AST_HPP_INCLUDED
 
-/* typedef struct tml_ast_struct {}tml_ast_struct; */
+#include <vector>
+#include <string>
+#include <memory>
+#include <algorithm>
+#include <iostream>
 
+using namespace std;
+typedef enum tml_property
+{
+    _attributes,
+    _normal,
+    _standout,
+    _underline, 
+    _reverse,
+    _blink,
+    _dim,
+    _bold,
+    _altcharset,
+    _invisible,
+    _protect,
+    _horizontal,
+    _left,
+    _low,
+    _right,
+    _top,
+    _vertical
+} tml_property;
+
+typedef enum tag_color
+{
+    black = 1,
+    red,
+    green,
+    yellow,
+    blue,
+    cyan,
+    magenta, //purple
+    white,
+    // ... 
+    grey,
+    pink,
+    maroon,
+    light_blue,
+    light,
+    light_green,
+    gold,
+    brown
+}tml_color;
+
+typedef struct tml_ast_struct 
+{
+    tml_color tag_color;
+    vector<tml_property> tml_properties;
+    string value;
+}tml_ast_struct;
+
+unique_ptr<tml_ast_struct> init_ast (tml_color tag_color,vector<tml_property> tml_properties, string value);
+void view_ast(unique_ptr<tml_ast_struct> ast);
 
 #endif // AST_HPP_INCLUDED

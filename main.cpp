@@ -21,6 +21,71 @@
 #define PROGRAM "\"tmlr\""
 #define PROJECT "\"project JOB\""
 
+// Color definition
+#define BLACK_PAIR     1
+#define RED_PAIR       2
+#define GREEN_PAIR     3
+#define YELLOW_PAIR    4
+#define BLUE_PAIR      5
+#define CYAN_PAIR      6
+#define MAGENTA_PAIR   7
+#define WHITE_PAIR     8
+#define GREY_PAIR      9
+#define PINK_PAIR      10
+#define MAROON_PAIR    11
+#define LIGHT_BLUE_PAIR 12
+#define LIGHT_PAIR     13
+#define LIGHT_GREEN_PAIR 14
+#define GOLD_PAIR      15
+#define BROWN_PAIR     16
+
+
+void init_colors()
+{
+    // First 8 standard colors
+    init_pair(BLACK_PAIR, COLOR_BLACK, COLOR_BLACK);
+    init_pair(RED_PAIR, COLOR_RED, COLOR_BLACK);
+    init_pair(GREEN_PAIR, COLOR_GREEN, COLOR_BLACK);
+    init_pair(YELLOW_PAIR, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(BLUE_PAIR, COLOR_BLUE, COLOR_BLACK);
+    init_pair(CYAN_PAIR, COLOR_CYAN, COLOR_BLACK);
+    init_pair(MAGENTA_PAIR, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(WHITE_PAIR, COLOR_WHITE, COLOR_BLACK);
+    
+    // For extended colors, we need to check terminal support
+    if (can_change_color() && COLORS >= 16) {
+        // Define custom colors (RGB values 0-1000)
+        init_color(8, 500, 500, 500);     // Grey
+        init_color(9, 1000, 500, 500);    // Pink
+        init_color(10, 500, 0, 0);        // Maroon
+        init_color(11, 200, 600, 1000);   // Light Blue
+        init_color(12, 800, 800, 800);    // Light
+        init_color(13, 400, 1000, 400);   // Light Green
+        init_color(14, 1000, 800, 0);     // Gold
+        init_color(15, 600, 400, 200);    // Brown
+        
+        // Create pairs for custom colors
+        init_pair(GREY_PAIR, 8, COLOR_BLACK);
+        init_pair(PINK_PAIR, 9, COLOR_BLACK);
+        init_pair(MAROON_PAIR, 10, COLOR_BLACK);
+        init_pair(LIGHT_BLUE_PAIR, 11, COLOR_BLACK);
+        init_pair(LIGHT_PAIR, 12, COLOR_BLACK);
+        init_pair(LIGHT_GREEN_PAIR, 13, COLOR_BLACK);
+        init_pair(GOLD_PAIR, 14, COLOR_BLACK);
+        init_pair(BROWN_PAIR, 15, COLOR_BLACK);
+    } else {
+        // Fallback to standard colors if terminal doesn't support custom colors
+        init_pair(GREY_PAIR, COLOR_WHITE, COLOR_BLACK);      // Grey -> White
+        init_pair(PINK_PAIR, COLOR_MAGENTA, COLOR_BLACK);    // Pink -> Magenta
+        init_pair(MAROON_PAIR, COLOR_RED, COLOR_BLACK);      // Maroon -> Red
+        init_pair(LIGHT_BLUE_PAIR, COLOR_CYAN, COLOR_BLACK); // Light Blue -> Cyan
+        init_pair(LIGHT_PAIR, COLOR_WHITE, COLOR_BLACK);     // Light -> White
+        init_pair(LIGHT_GREEN_PAIR, COLOR_GREEN, COLOR_BLACK); // Light Green -> Green
+        init_pair(GOLD_PAIR, COLOR_YELLOW, COLOR_BLACK);     // Gold -> Yellow
+        init_pair(BROWN_PAIR, COLOR_YELLOW, COLOR_BLACK);    // Brown -> Yellow
+    }
+}
+
 
 enum arguments{
 	peek_inside_of_file, // --peek -P
@@ -46,39 +111,29 @@ void eat_file(const string& source_file_path)
 {
 	tml_lexer lexer(source_file_path);
 	unique_ptr<tml_token_struct> token;
+	string err_buffer = "\n🤢🤢\n---\n";
+	bool error_added = false;
+	string warning_buffer = "\n😡😡\n---\n";
+	bool warning_added = false;
 	while ((token = lexer.get_next_token()))
 	{
 		if (!token) break;
 		if (token -> type == tml_token_type::eof) break;
-		if (!lexer.get_errors().empty())
-		{
-			string err_buffer = "\n🤢🤢\n---\n";
-			for (string str:lexer.get_errors())
-			{
-				if (str.empty()) continue;
-				err_buffer.append(str + "\n---\n");
-			}
-			lexer.clear_error();
-			cerr << err_buffer << "\n";
-			exit(1);
-			break;
-		}
-		if (!lexer.get_warnings().empty())
-		{
-			string warning_buffer = "\n😡😡\n---\n";
-			for (string str:lexer.get_warnings())
-			{
-				if (str.empty()) continue;
-				warning_buffer.append(str + "\n---\n");
-			}
-			lexer.clear_warning();
-			cerr << warning_buffer << "\n";
-			exit(1);
-			break;
-		}
+		if (!lexer.get_errors().empty()) error_added = true;
+		if (!lexer.get_warnings().empty()) warning_added = true;
 		token_view(token);
 	}
 	token_view(token);
+	if (error_added)
+	{
+		cout << err_buffer;
+		for_each(lexer.get_errors().begin(),lexer.get_errors().end(),[&](auto& e_str){cout << e_str << "\n\t---\n\n";});
+	}
+	if (warning_added)
+	{
+		cout << warning_buffer;
+		for_each(lexer.get_warnings().begin(),lexer.get_warnings().end(),[&](auto& w_str){cout << w_str << "\n\t---\n\n";});
+	}
 	return;
 }
 

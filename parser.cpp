@@ -18,3 +18,8 @@
 
 #include "parser.hpp"
 
+tml_parser::tml_parser(tml_lexer lexer):
+    lexer(lexer),
+    current_token(this -> lexer.get_next_token()),
+    previous_token(nullptr)
+{}

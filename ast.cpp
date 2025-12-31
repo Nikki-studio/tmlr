@@ -16,6 +16,25 @@
 */
 
 
-#include "lexer.hpp"
+#include "ast.hpp"
 
 
+unique_ptr<tml_ast_struct> init_ast (tml_color tag_color,vector<tml_property> tml_properties, string value)
+{
+    auto ast = make_unique<tml_ast_struct>();
+    if (!ast) return nullptr;
+    ast -> tag_color = tag_color;
+    ast -> tml_properties = tml_properties;
+    ast -> value = value;
+    return ast;
+}
+
+void view_ast(unique_ptr<tml_ast_struct> ast)
+{
+    if (!ast) return;
+
+    cout << "ast\n\ttag color: " << ast -> tag_color <<"\n\tproperties\n\t\t";
+    for_each(ast -> tml_properties.begin(),ast -> tml_properties.end(),[&](auto& tml_property_x){
+        cout << tml_property_x  << "\n\t\t";
+    });
+}

@@ -25,7 +25,7 @@ all: $(binary)
 bin/$(binary): $(binary) | bin
 
 $(binary):$(objects) | bin
-	g++ $(flags) $^ -o bin/$@
+	g++ $(flags) $^ -o bin/$@ -lncurses
 
 obj/%.o: ./%.cpp ./%.hpp
 	g++ $(flags) -c $< -o $@

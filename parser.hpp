@@ -21,7 +21,17 @@
 
 #include "lexer.hpp"
 #include "ast.hpp"
-/* typedef struct tml_parser_struct {}tml_parser_struct; */
+
+
+class tml_parser 
+{
+    unique_ptr<tml_token_struct> previous_token;
+    unique_ptr<tml_token_struct> current_token;
+    tml_lexer lexer;
+    public:
+    tml_parser(tml_lexer lexer);
+    ~ tml_parser();
+};
 
 
 
