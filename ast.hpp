@@ -47,7 +47,7 @@ typedef enum tml_property
     _vertical
 } tml_property;
 
-typedef enum tag_color
+typedef enum tml_color
 {
     black = 1,
     red,

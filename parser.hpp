@@ -28,8 +28,17 @@ class tml_parser
     unique_ptr<tml_token_struct> previous_token;
     unique_ptr<tml_token_struct> current_token;
     tml_lexer lexer;
+    tml_lexer_state tml_parser_state;
+    unsigned int tag_depth;
+    tml_color tag_color;
+    unordered_map<int,vector<tml_property>> inherited_property;
     public:
     tml_parser(tml_lexer lexer);
+    void change_state(tml_lexer_state tml_parser_state);
+    bool advance_if_current_token_type_is_this(tml_token_type type);
+    bool advance_if_previous_token_type_is_this(tml_token_type type);
+    void eat();
+    unique_ptr<tml_ast_struct> parse();
     ~ tml_parser();
 };
 
