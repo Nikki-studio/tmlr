@@ -282,13 +282,13 @@ unique_ptr<tml_token_struct> tml_lexer::HANDLE_IN_TAG_HEAD()
 		this -> change_state (tml_lexer_state::IN_TAG_TAIL);
 		return this -> _advance_with_token(tml_token_type::backtick,this -> get_current_char_as_string());
 	}
-	else if (this -> is_current_char_this('"')) return this -> _advance_with_token(tml_token_type::t_string           ,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this('\'')) return this -> _advance_with_token(tml_token_type::c_string          ,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this('=')) return this -> _advance_with_token(tml_token_type::equals_sign        ,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this(';')) return this -> _advance_with_token(tml_token_type::semi_colon         ,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this(',')) return this -> _advance_with_token(tml_token_type::comma              ,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this('{')) return this -> _advance_with_token(tml_token_type::opening_curly_brace,this -> get_current_char_as_string());
-	else if (this -> is_current_char_this('}')) return this -> _advance_with_token(tml_token_type::closing_curly_brace,this -> get_current_char_as_string());
+	else if (this -> is_current_char_this('"')) return this -> _advance_with_token(tml_token_type::t_string           , this -> get_current_char_as_string());
+	else if (this -> is_current_char_this('\'')) return this -> _advance_with_token(tml_token_type::c_string          , this -> get_current_char_as_string());
+	else if (this -> is_current_char_this('=')) return this -> _advance_with_token(tml_token_type::equals_sign        , this -> get_current_char_as_string());
+	else if (this -> is_current_char_this(';')) return this -> _advance_with_token(tml_token_type::semi_colon         , this -> get_current_char_as_string());
+	else if (this -> is_current_char_this(',')) return this -> _advance_with_token(tml_token_type::comma              , this -> get_current_char_as_string());
+	else if (this -> is_current_char_this('{')) return this -> _advance_with_token(tml_token_type::opening_curly_brace, this -> get_current_char_as_string());
+	else if (this -> is_current_char_this('}')) return this -> _advance_with_token(tml_token_type::closing_curly_brace, this -> get_current_char_as_string());
 	value += " > " + this -> get_current_char_as_string()+ " < ";
 	token = init_token(tml_token_type::content,
 			value,this -> current_line,this -> current_col,1,

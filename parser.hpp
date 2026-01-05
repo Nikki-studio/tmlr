@@ -35,9 +35,11 @@ class tml_parser
     public:
     tml_parser(tml_lexer lexer);
     void change_state(tml_lexer_state tml_parser_state);
-    bool advance_if_current_token_type_is_this(tml_token_type type);
-    bool advance_if_previous_token_type_is_this(tml_token_type type);
+    bool current_token_type_is_this(tml_token_type type);
+    bool previous_token_type_is_this(tml_token_type type);
     void eat();
+    void set_color(string color_value);
+    void add_inherited_property();
     unique_ptr<tml_ast_struct> parse();
     ~ tml_parser();
 };

@@ -24,6 +24,8 @@
 #include <memory>
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
+
 
 using namespace std;
 typedef enum tml_property
@@ -67,6 +69,47 @@ typedef enum tml_color
     gold,
     brown
 }tml_color;
+
+static const unordered_map<string,tml_property> __properties = 
+{
+    {"attributes",_attributes},
+    {"normal",_normal},
+    {"standout",_standout},
+    {"underline",_underline}, 
+    {"reverse",_reverse},
+    {"blink",_blink},
+    {"dim",_dim},
+    {"bold",_bold},
+    {"altcharset",_altcharset},
+    {"invisible",_invisible},
+    {"protect",_protect},
+    {"horizontal",_horizontal},
+    {"left",_left},
+    {"low",_low},
+    {"right",_right},
+    {"top",_top},
+    {"vertical",_vertical}
+};
+
+static const unordered_map<string,tml_color> __colors= 
+{
+    {"black",black},
+    {"red",red},
+    {"green",green},
+    {"yellow",yellow},
+    {"blue",blue},
+    {"cyan",cyan},
+    {"magenta",magenta},
+    {"white",white},
+    {"grey",grey},
+    {"pink",pink},
+    {"maroon",maroon},
+    {"light_blue",light_blue},
+    {"light",light},
+    {"light_green",light_green},
+    {"gold",gold},
+    {"brown",brown}
+};
 
 typedef struct tml_ast_struct 
 {
