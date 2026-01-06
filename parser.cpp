@@ -109,6 +109,45 @@ unique_ptr<tml_ast_struct> tml_parser::parse()
     if (this -> current_token_type_is_this(tml_token_type::delimiter))
     {
         this -> tag_depth++;
+        this -> eat();
+        if (this -> current_token -> type == tml_token_type::identifier)
+        {
+            // ... document ... link ... paragraph ... line ... word
+            while (
+                !this -> current_token_type_is_this(tml_token_type::eof) &&
+                !this -> current_token_type_is_this(tml_token_type::backtick))
+            {
+                this -> eat();
+            }
+        }
+        else if (this -> current_token -> type == tml_token_type::backtick)
+        {
+            this -> eat();
+            while (
+                !this -> current_token_type_is_this(tml_token_type::eof) &&
+                !this -> current_token_type_is_this(tml_token_type::backtick))
+            {
+                this -> eat();
+            }
+            if (this -> current_token_type_is_this(tml_token_type::backtick)) this -> eat();
+        }
+        else
+        {
+            cerr << "!!parser err: misplaced token\n\t>" << this -> current_token ->value << "<\n\t ^\n\t |\n\t this token does not follow the set rules.\n";
+            exit(1);
+        }
+        
+    }
+    else if (this -> current_token_type_is_this(tml_token_type::content))
+    {
+        auto ast = init_ast(tml_color::black,{},this -> current_token -> value);
+        this -> eat();
+        return ast;
+    }
+    else
+    {
+        cerr << "!!parser err: misplaced token\n\t>" << this -> current_token ->value << "<\n\t ^\n\t |\n\t this token does not follow the set rules.\n";
+        exit(1);
     }
 }
 

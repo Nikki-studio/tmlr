@@ -43,14 +43,14 @@
 void init_colors()
 {
     // First 8 standard colors
-    init_pair(BLACK_PAIR, COLOR_BLACK, COLOR_BLACK);
+    init_pair(BLACK_PAIR, COLOR_WHITE, COLOR_BLACK);
     init_pair(RED_PAIR, COLOR_RED, COLOR_BLACK);
     init_pair(GREEN_PAIR, COLOR_GREEN, COLOR_BLACK);
     init_pair(YELLOW_PAIR, COLOR_YELLOW, COLOR_BLACK);
     init_pair(BLUE_PAIR, COLOR_BLUE, COLOR_BLACK);
     init_pair(CYAN_PAIR, COLOR_CYAN, COLOR_BLACK);
     init_pair(MAGENTA_PAIR, COLOR_MAGENTA, COLOR_BLACK);
-    init_pair(WHITE_PAIR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(WHITE_PAIR, COLOR_BLACK,COLOR_WHITE);
     
     // For extended colors, we need to check terminal support
     if (can_change_color() && COLORS >= 16) {
