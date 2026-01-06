@@ -24,7 +24,7 @@ tml_parser::tml_parser(tml_lexer lexer):
     current_token(this -> lexer.get_next_token()),
     previous_token(nullptr),
     tag_depth(0),
-    inherited_property({})
+    inherited_properties({})
 {
 }
 
@@ -37,6 +37,8 @@ void tml_parser::eat()
 {
     this -> previous_token = move(this -> current_token);
     this -> current_token = this -> lexer.get_next_token();
+    if (!this -> current_token)
+        cerr <<"Unexpected end of input!\n";
 }
 bool tml_parser::current_token_type_is_this(tml_token_type type)
 {
@@ -46,6 +48,52 @@ bool tml_parser::current_token_type_is_this(tml_token_type type)
 bool tml_parser::previous_token_type_is_this(tml_token_type type)
 {
     return this -> previous_token -> type == type;
+}
+
+void tml_parser::update_inheritable()
+{
+    this -> inheritable_properties.clear();
+    while (this -> tag_depth < this -> inherited_properties.size())
+        this -> inherited_properties.pop_back();
+
+    for (int i = this -> tag_depth; i >= 0; --i)
+    {
+        for (const auto& inherited_property:this -> inherited_properties)
+            for (const auto& value_:inherited_property.second)
+                if ((value_ == tml_property::_horizontal && !this -> inheritable_properties_contains(tml_property::_vertical  )) || 
+                    (value_ == tml_property::_vertical   && !this -> inheritable_properties_contains(tml_property::_horizontal)) ||
+                    (value_ == tml_property::_top        && !this -> inheritable_properties_contains(tml_property::_low       )) ||
+                    (value_ == tml_property::_low        && !this -> inheritable_properties_contains(tml_property::_top       )) ||
+                    (value_ == tml_property::_left       && !this -> inheritable_properties_contains(tml_property::_right     )) ||
+                    (value_ == tml_property::_right      && !this -> inheritable_properties_contains(tml_property::_left      )))
+                        this -> inheritable_properties.push_back(value_);
+    }
+}
+
+void tml_parser::set_color(string color_value)
+{
+    auto it = __colors.find(color_value);
+    if (it != __colors.end())
+        this -> tag_color = it -> second;
+}
+
+void tml_parser::add_inherited_properties(vector<string> properties_value)
+{
+    vector<tml_property> vector_to_add;
+    for (const auto&property_value:properties_value)
+    {
+        auto it = __properties.find(property_value);
+        if (it != __properties.end())
+            vector_to_add.push_back(it -> second);
+    };
+    this -> inherited_properties.push_back(pair(this -> tag_depth,vector_to_add));
+}
+
+bool tml_parser::inheritable_properties_contains(tml_property property)
+{
+    for (const auto& property_subject:this -> inheritable_properties)
+        if (property_subject == property) return true;
+    return false;
 }
 
 unique_ptr<tml_ast_struct> tml_parser::parse()
@@ -60,7 +108,7 @@ unique_ptr<tml_ast_struct> tml_parser::parse()
     }
     if (this -> current_token_type_is_this(tml_token_type::delimiter))
     {
-        //
+        this -> tag_depth++;
     }
 }
 

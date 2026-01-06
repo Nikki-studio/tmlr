@@ -101,7 +101,9 @@ terminal, markup-language, text-formatting, ncurses, cpp, console, text-ui, tui,
 ```
 
 ## **LIMITATION**
+
 > * Only parse UTF-8 more than a byte char in the head
+
 ---
 
-*Built with C++ and NCurses. For questions or contributions, contact Joseph Wangai Mwaniki at joewamwaniki@gmail.com*
+*Built with C++ and NCurses. For questions or contributions, contact Joseph Wangai Mwaniki at <a href="mailto:joewamwaniki@gmail.com">joewamwaniki@gmail.com</a>*

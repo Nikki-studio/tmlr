@@ -31,19 +31,21 @@ class tml_parser
     tml_lexer_state tml_parser_state;
     unsigned int tag_depth;
     tml_color tag_color;
-    unordered_map<int,vector<tml_property>> inherited_property;
+    vector<pair<int,vector<tml_property>>> inherited_properties;
+    vector<tml_property> inheritable_properties;
+    bool tag_name_satisfied;
     public:
     tml_parser(tml_lexer lexer);
     void change_state(tml_lexer_state tml_parser_state);
     bool current_token_type_is_this(tml_token_type type);
     bool previous_token_type_is_this(tml_token_type type);
     void eat();
+    void update_inheritable();
     void set_color(string color_value);
-    void add_inherited_property();
+    void add_inherited_properties(vector<string> properties_value);
+    bool inheritable_properties_contains(tml_property property);
     unique_ptr<tml_ast_struct> parse();
     ~ tml_parser();
 };
-
-
 
 #endif // PARSER_HPP_INCLUDED
