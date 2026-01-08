@@ -15,33 +15,43 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-binary   ?= tmlr
-SRC_DIRS := ./ src lib utils
-sources  := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
-objects  := $(patsubst %cpp , obj/%.o , $(sources))
-flags    := -std=c++23 -g -I./ -O3 -MMD -MP  -Wno-return-type # -Werror
+BINARY   ?= bin/tmlr
+SOURCES  := $(shell find . -name "*.cpp")
+OBJECTS  := $(SOURCES:./%.cpp=obj/%.o)
+DEPS     := $(OBJECTS:.o=.d)
 
-all: $(binary)
-bin/$(binary): $(binary) | bin
 
-$(binary):$(objects) | bin
-	g++ $(flags) $^ -o bin/$@ -lncurses
+CXX      := g++
+CXXFLAGS := -std=c++23 -g -I./ -O3 -MMD -MP  -Wno-return-type # -Werror
+LDFLAGS  := -lncursesw
 
-obj/%.o: ./%.cpp ./%.hpp
-	g++ $(flags) -c $< -o $@
+MAKEFLAGS := --no-builtin-rules --no-builtin-variables
+NPROC := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
+
+.PHONY: all
+all: $(BINARY)
+
+$(BINARY):$(OBJECTS) | bin
+	$(CXX) $(CXXFLAGS) $^ -o bin/$@ $(LDFLAGS)
+
+
+obj/%.o: ./%.cpp ./%.hpp | obj
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+-include:$(DEPS)
+.PHONY: clean run
 
 bin obj:
 	mkdir -p $@
 
-run:$(binary)
-	./bin/$<
+run:$(BINARY)
+	./$<
 
 clean:
 	-rm -r bin obj
 	mkdir -p bin obj
 
 
-.PHONY:all clean run
 
 

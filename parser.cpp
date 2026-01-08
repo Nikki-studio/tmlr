@@ -110,33 +110,12 @@ unique_ptr<tml_ast_struct> tml_parser::parse()
     {
         this -> tag_depth++;
         this -> eat();
-        if (this -> current_token -> type == tml_token_type::identifier)
-        {
-            // ... document ... link ... paragraph ... line ... word
-            while (
-                !this -> current_token_type_is_this(tml_token_type::eof) &&
-                !this -> current_token_type_is_this(tml_token_type::backtick))
-            {
-                this -> eat();
-            }
-        }
-        else if (this -> current_token -> type == tml_token_type::backtick)
-        {
-            this -> eat();
-            while (
-                !this -> current_token_type_is_this(tml_token_type::eof) &&
-                !this -> current_token_type_is_this(tml_token_type::backtick))
-            {
-                this -> eat();
-            }
-            if (this -> current_token_type_is_this(tml_token_type::backtick)) this -> eat();
-        }
-        else
-        {
-            cerr << "!!parser err: misplaced token\n\t>" << this -> current_token ->value << "<\n\t ^\n\t |\n\t this token does not follow the set rules.\n";
-            exit(1);
-        }
-        
+        string value;
+        bool is_in_the_tail = false;
+        bool tag_name_satisfied = false;
+        // ... document ... link ... paragraph ... line ... word
+        if (this -> current_token_type_is_this(tml_token_type::eof)&&this -> current_token_type_is_this(tml_token_type::backtick))
+        {}
     }
     else if (this -> current_token_type_is_this(tml_token_type::content))
     {
@@ -144,11 +123,8 @@ unique_ptr<tml_ast_struct> tml_parser::parse()
         this -> eat();
         return ast;
     }
-    else
-    {
-        cerr << "!!parser err: misplaced token\n\t>" << this -> current_token ->value << "<\n\t ^\n\t |\n\t this token does not follow the set rules.\n";
-        exit(1);
-    }
+    cerr << "!!parser err: misplaced token\n\t>" << this -> current_token ->value << "<\n\t ^\n\t |\n\t this token does not follow the set rules.\n";
+    exit(1);
 }
 
 

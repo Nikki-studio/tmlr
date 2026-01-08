@@ -31,6 +31,7 @@
 #include <filesystem>
 #include <span>
 #include <memory>
+#include "main.hpp"
 
 using namespace std;
 namespace fs = filesystem;

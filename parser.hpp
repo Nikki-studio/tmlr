@@ -33,7 +33,6 @@ class tml_parser
     tml_color tag_color;
     vector<pair<int,vector<tml_property>>> inherited_properties;
     vector<tml_property> inheritable_properties;
-    bool tag_name_satisfied;
     public:
     tml_parser(tml_lexer lexer);
     void change_state(tml_lexer_state tml_parser_state);

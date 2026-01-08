@@ -34,7 +34,7 @@ unique_ptr<tml_token_struct> init_token(tml_token_type type,string value,unsigne
 	token -> len = len;
 	token -> file_path = file_path;
 	return token;
-}
+} 
 
 void token_view(unique_ptr<tml_token_struct>& token)
 {
