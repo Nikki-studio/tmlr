@@ -33,7 +33,7 @@ NPROC := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 all: $(BINARY)
 
 $(BINARY):$(OBJECTS) | bin
-	$(CXX) $(CXXFLAGS) $^ -o bin/$@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
 
 
 obj/%.o: ./%.cpp ./%.hpp | obj
