@@ -34,11 +34,13 @@ class tml_parser
     vector<pair<int,vector<tml_property>>> inherited_properties;
     vector<tml_property> inheritable_properties;
     public:
+    tml_lexer get_lexer();
     tml_parser(tml_lexer lexer);
     void change_state(tml_lexer_state tml_parser_state);
     bool current_token_type_is_this(tml_token_type type);
     bool previous_token_type_is_this(tml_token_type type);
     void eat();
+    void show_current_token();
     void update_inheritable();
     void set_color(string color_value);
     void add_inherited_properties(vector<string> properties_value);

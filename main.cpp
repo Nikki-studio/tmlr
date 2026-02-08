@@ -89,29 +89,28 @@ void peek_in_file(const string& source_file_path)
 void eat_file(const string& source_file_path)
 {
 	tml_lexer lexer(source_file_path);
-	unique_ptr<tml_token_struct> token;
+	tml_parser parser(lexer);
 	string err_buffer = "\n🤢🤢\n---\n";
 	bool error_added = false;
 	string warning_buffer = "\n😡😡\n---\n";
 	bool warning_added = false;
-	while ((token = lexer.get_next_token()))
+	while (!parser.current_token_type_is_this(tml_token_type::eof))
 	{
-		if (!token) break;
-		if (token -> type == tml_token_type::eof) break;
-		if (!lexer.get_errors().empty()) error_added = true;
-		if (!lexer.get_warnings().empty()) warning_added = true;
-		token_view(token);
+		parser.eat();
+		parser.show_current_token();
+		if (!parser.get_lexer().get_errors().empty()) error_added = true;
+		if (!parser.get_lexer().get_warnings().empty()) warning_added = true;
 	}
-	token_view(token);
+	
 	if (error_added)
 	{
 		cout << err_buffer;
-		for_each(lexer.get_errors().begin(),lexer.get_errors().end(),[&](auto& e_str){cout << e_str << "\n\t---\n\n";});
+		for_each(parser.get_lexer().get_errors().begin(),parser.get_lexer().get_errors().end(),[&](auto& e_str){cout << e_str << "\n\t---\n\n";});
 	}
 	if (warning_added)
 	{
 		cout << warning_buffer;
-		for_each(lexer.get_warnings().begin(),lexer.get_warnings().end(),[&](auto& w_str){cout << w_str << "\n\t---\n\n";});
+		for_each(parser.get_lexer().get_warnings().begin(),parser.get_lexer().get_warnings().end(),[&](auto& w_str){cout << w_str << "\n\t---\n\n";});
 	}
 	return;
 }

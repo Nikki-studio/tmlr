@@ -22,10 +22,14 @@ tml_parser::tml_parser(tml_lexer lexer):
     lexer(lexer),
     tml_parser_state(tml_lexer_state::INITIAL),
     current_token(this -> lexer.get_next_token()),
-    previous_token(nullptr),
-    tag_depth(0),
+    previous_token(nullptr), 
     inherited_properties({})
 {
+}
+
+tml_lexer tml_parser::get_lexer()
+{
+    return this -> lexer;
 }
 
 void tml_parser::change_state(tml_lexer_state tml_parser_state)
@@ -40,6 +44,11 @@ void tml_parser::eat()
     if (!this -> current_token)
         cerr <<"Unexpected end of input!\n";
 }
+void tml_parser::show_current_token()
+{
+    token_view(this -> current_token);
+}
+
 bool tml_parser::current_token_type_is_this(tml_token_type type)
 {
     return this -> current_token -> type == type;
